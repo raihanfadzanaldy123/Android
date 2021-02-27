@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:latihan_dulu/mvc/get_post_provinsiM.dart';
+import 'mvc/get_post_provinsi.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,29 +17,78 @@ class MyApp extends StatelessWidget {
 }
 
 class Music extends StatelessWidget {
-  final List musik = [
-    "Pamungkas - Kenangan Manis",
-    "Dere - Kota",
-    "Efek Rumah Kaca - Kau dan Aku Menuju Ruang Hamapa",
-    "HINDIA - Evaluasi",
-    "Uap Widya - Bersama",
-  ];
+  final GetPost _getPost = new GetPost();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("DAftar Musik"),
-      ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          return Card(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Text(musik[index], style: TextStyle(fontSize: 30)),
-            ),
-          );
+      body: FutureBuilder(
+        future: _getPost.manggilPostData(),
+        builder: (context, AsyncSnapshot<List<Post>> snapshot) {
+          if (snapshot.hasData != null) {
+            List<Post> dataPost = snapshot.data;
+            return ListView.builder(
+              itemCount: dataPost.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          margin: EdgeInsets.all(20),
+                          width: 365,
+                          decoration: BoxDecoration(
+                              color: Colors.yellow[400],
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.orange,
+                                  blurRadius: 5.0,
+                                  spreadRadius: 2.0,
+                                ),
+                              ]),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.all(20),
+                                child: Image.asset(
+                                  'assets/images/ind.png',
+                                  width: 60,
+                                ),
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Text('Provinsi : ' + dataPost[index].provinsi,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                      'Positif : ' +
+                                          dataPost[index].positif.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                      'Sembuh : ' +
+                                          dataPost[index].sembuh.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                      'Meninggal : ' +
+                                          dataPost[index].meninggal.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         },
-        itemCount: musik.length,
       ),
     );
   }
